@@ -1,1 +1,27 @@
-<p>photo-gallery works!</p>
+<section class="mb-10">
+  <div class="flex justify-between items-center mb-6">
+    <h2 class="text-2xl font-bold text-gray-800">Photo Gallery</h2>
+    <a href="#" class="text-red-600 font-medium hover:underline flex items-center">
+      View All
+      <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+      </svg>
+    </a>
+  </div>
+  <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+    <a *ngFor="let photo of photos"
+       href="#"
+       class="relative group block overflow-hidden rounded-xl news-card">
+      <img [src]="photo.url" [alt]="photo.caption" class="w-full h-40 object-cover transition duration-500 group-hover:scale-110">
+      <div class="absolute inset-0 bg-black bg-opacity-40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition">
+        <div class="text-white text-center">
+          <svg class="w-8 h-8 mx-auto mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"></path>
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"></path>
+          </svg>
+          <span class="text-sm font-medium">{{ photo.caption }}</span>
+        </div>
+      </div>
+    </a>
+  </div>
+</section>

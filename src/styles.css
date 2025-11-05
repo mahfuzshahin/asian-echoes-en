@@ -1,8 +1,4 @@
-/* You can add global styles to this file, and also import other style files */
-@import 'swiper/css';
-@import 'swiper/css/navigation';
-@import 'swiper/css/pagination';
-@import 'swiper/css/thumbs';
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -11,6 +7,15 @@
 body {
   font-family: 'Inter', sans-serif;
   background-color: #f8fafc;
+}
+
+.breaking-news-ticker {
+  animation: ticker 40s linear infinite;
+}
+
+@keyframes ticker {
+  0% { transform: translateX(100%); }
+  100% { transform: translateX(-100%); }
 }
 
 .nav-link {
@@ -36,17 +41,35 @@ body {
 }
 
 .category-tag {
-  background-color: #ef4444;
   color: white;
   padding: 4px 12px;
   border-radius: 20px;
   font-size: 0.75rem;
   font-weight: 600;
   display: inline-block;
+  margin-bottom: 8px;
+}
+
+.news-card {
+  transition: all 0.3s ease;
+  border-radius: 12px;
+  overflow: hidden;
 }
 
 .news-card:hover {
   transform: translateY(-5px);
   box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
-  transition: all 0.3s ease;
+}
+
+.trending-badge {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  background-color: #ef4444;
+  color: white;
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 0.7rem;
+  font-weight: 600;
+  z-index: 10;
 }

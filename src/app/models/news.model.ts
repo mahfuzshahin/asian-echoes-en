@@ -10,6 +10,7 @@ export interface News {
   views: number;
   tags: string[];
   isFeatured: boolean;
+  readTime: number;
 }
 
 export interface Category {
@@ -22,5 +23,10 @@ export interface Photo {
   id: number;
   url: string;
   caption: string;
-  newsId: number;
+}
+
+export interface TabNews {
+  title: string;
+  time?: string;
+  rank?: number;
 }

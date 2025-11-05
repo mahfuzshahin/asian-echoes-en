@@ -17,21 +17,11 @@ import {CommonModule, NgForOf} from "@angular/common";
   styleUrl: './header.component.css'
 })
 export class HeaderComponent implements OnInit{
-  categories: Category[] = [];
   currentTime: string = '';
 
-  constructor(private newsService: NewsService) { }
-
   ngOnInit(): void {
-    this.loadCategories();
     this.updateTime();
     setInterval(() => this.updateTime(), 60000);
-  }
-
-  loadCategories(): void {
-    this.newsService.getCategories().subscribe(categories => {
-      this.categories = categories;
-    });
   }
 
   updateTime(): void {

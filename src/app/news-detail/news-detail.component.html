@@ -1,1 +1,303 @@
-<p>news-detail works!</p>
+<div class="min-h-screen bg-gray-50">
+  <!-- Breadcrumb -->
+  <div class="bg-white border-b">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <nav class="flex py-4 text-sm text-gray-500">
+        <a routerLink="/" class="hover:text-red-600 transition">Home</a>
+        <span class="mx-2">/</span>
+        <a [routerLink]="['/category', news?.category?.toLowerCase()]" class="hover:text-red-600 transition capitalize">
+          {{ news?.category }}
+        </a>
+        <span class="mx-2">/</span>
+        <span class="text-gray-700 truncate">{{ news?.title }}</span>
+      </nav>
+    </div>
+  </div>
+  <!-- Main Content -->
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div class="grid grid-cols-1 lg:grid-cols-4 gap-2">
+      <!-- Article Content -->
+      <div class="lg:col-span-3">
+        <!-- Article Header -->
+        <article class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+          <!-- Category and Meta -->
+          <div class="p-6 border-b border-gray-100">
+            <div class="flex flex-wrap items-center justify-between mb-4">
+              <div class="flex items-center space-x-4">
+                <span [class]="'category-tag ' + getCategoryColor(news?.category)">
+                  {{ news?.category }}
+                </span>
+                <div class="flex items-center space-x-2 text-sm text-gray-500">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                  </svg>
+                  <span>{{ formatDate(news?.publishAt) }}</span>
+                </div>
+              </div>
+              <div class="flex items-center space-x-2 text-sm text-gray-500">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+                </svg>
+                <span>{{ news?.views || 0 }} views</span>
+              </div>
+            </div>
+
+            <!-- Title -->
+            <h1 class="text-3xl sm:text-4xl font-bold text-gray-800 leading-tight mb-4">
+              {{ news?.title }}
+            </h1>
+
+            <!-- Summary - REMOVED [innerHTML] binding here -->
+            <p class="text-xl text-gray-600 leading-relaxed mb-6">
+              {{ news?.summary }}
+            </p>
+
+            <!-- Author and Meta -->
+            <div class="flex flex-wrap items-center justify-between">
+              <div class="flex items-center space-x-4">
+                <div class="flex items-center space-x-3">
+                  <div class="w-10 h-10 bg-red-100 rounded-full flex items-center justify-center">
+                    <span class="text-red-600 font-semibold text-sm">
+                      {{ news?.author?.name?.charAt(0) || 'A' }}
+                    </span>
+                  </div>
+                  <div>
+                    <p class="font-semibold text-gray-800">{{ news?.author?.name || 'News Desk' }}</p>
+                    <p class="text-sm text-gray-500">{{ news?.author?.designation || 'Senior Correspondent' }}</p>
+                  </div>
+                </div>
+              </div>
+              <div class="flex items-center space-x-4 text-sm text-gray-500">
+                <span>{{ (news?.content ? calculateReadingTime(news.content) : 1) }} min read</span>
+                <span>•</span>
+                <span>Updated {{ formatDate(news?.publishAt) }}</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Featured Image -->
+          <div *ngIf="news?.attachmentUrl" class="relative">
+            <img [src]="news?.attachmentUrl" [alt]="news?.title"
+                 class="w-full h-96 object-cover">
+            <div class="absolute bottom-4 left-4">
+              <span class="bg-black bg-opacity-50 text-white px-3 py-1 rounded text-sm">
+                Featured Image
+              </span>
+            </div>
+          </div>
+
+          <!-- Article Content - MAIN CONTENT GOES HERE -->
+          <div class="p-6 lg:p-8">
+            <div class="prose prose-lg max-w-none" [innerHTML]="news?.content">
+            </div>
+
+            <!-- Image Gallery -->
+            <div *ngIf="news?.galleries && news?.galleries?.length > 0" class="mt-8">
+              <h3 class="text-2xl font-bold text-gray-800 mb-4">Photo Gallery</h3>
+              <div class="relative bg-gray-900 rounded-lg overflow-hidden">
+                <img [src]="news.galleries[currentIndex]?.fileUrl"
+                     [alt]="'Gallery image ' + (currentIndex + 1)"
+                     class="w-full h-96 object-cover">
+
+                <!-- Navigation Arrows -->
+                <button (click)="previousImage()"
+                        class="absolute left-4 top-1/2 transform -translate-y-1/2 bg-white bg-opacity-20 hover:bg-opacity-30 text-white p-2 rounded-full transition">
+                  <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+                  </svg>
+                </button>
+                <button (click)="nextImage()"
+                        class="absolute right-4 top-1/2 transform -translate-y-1/2 bg-white bg-opacity-20 hover:bg-opacity-30 text-white p-2 rounded-full transition">
+                  <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                  </svg>
+                </button>
+
+                <!-- Image Counter -->
+                <div class="absolute bottom-4 left-1/2 transform -translate-x-1/2 bg-black bg-opacity-50 text-white px-3 py-1 rounded text-sm">
+                  {{ currentIndex + 1 }} / {{ news?.galleries?.length }}
+                </div>
+              </div>
+
+              <!-- Thumbnails -->
+              <div class="grid grid-cols-4 gap-2 mt-4">
+                <div *ngFor="let image of news?.galleries; let i = index"
+                     (click)="currentIndex = i"
+                     [class]="'cursor-pointer border-2 rounded ' + (currentIndex === i ? 'border-red-600' : 'border-transparent')">
+                  <img [src]="image?.fileUrl" [alt]="'Thumbnail ' + (i + 1)" class="w-full h-20 object-cover rounded">
+                </div>
+              </div>
+            </div>
+
+            <!-- Videos Section -->
+            <div *ngIf="news?.videos && news?.videos?.length > 0" class="mt-8">
+              <h3 class="text-2xl font-bold text-gray-800 mb-4">Related Videos</h3>
+              <div class="bg-gray-900 rounded-lg overflow-hidden">
+                <div class="aspect-w-16 aspect-h-9">
+                  <iframe [src]="getSafeVideoUrl(news.videos[currentVideoIndex].url)"
+                          class="w-full h-96"
+                          frameborder="0"
+                          allowfullscreen>
+                  </iframe>
+                </div>
+              </div>
+
+              <!-- Video Thumbnails -->
+              <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mt-4">
+                <div *ngFor="let video of news.videos; let i = index"
+                     (click)="currentVideoIndex = i"
+                     [class]="'cursor-pointer border-2 rounded ' + (currentVideoIndex === i ? 'border-red-600' : 'border-transparent')">
+                  <div class="relative">
+                    <img [src]="'https://img.youtube.com/vi/' + extractVideoId(video?.url) + '/hqdefault.jpg'"
+                         [alt]="'Video thumbnail ' + (i + 1)"
+                         class="w-full h-20 object-cover rounded">
+                    <div class="absolute inset-0 flex items-center justify-center">
+                      <svg class="w-8 h-8 text-white opacity-80" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M8 5v14l11-7z"/>
+                      </svg>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Tags -->
+            <div *ngIf="news?.tags && news.tags.length > 0" class="mt-8 pt-6 border-t border-gray-200">
+              <div class="flex flex-wrap items-center gap-2">
+                <span class="font-semibold text-gray-700">Tags:</span>
+                <a *ngFor="let tag of news?.tags"
+                   href="#"
+                   class="px-3 py-1 bg-gray-100 text-gray-700 rounded-full text-sm hover:bg-red-100 hover:text-red-700 transition">
+                  #{{ tag }}
+                </a>
+              </div>
+            </div>
+
+            <!-- Share Section -->
+            <div class="mt-8 pt-6 border-t border-gray-200">
+              <div class="flex flex-wrap items-center justify-between">
+                <span class="font-semibold text-gray-700 mb-4 lg:mb-0">Share this story:</span>
+                <div class="flex space-x-3">
+                  <button (click)="shareOnFacebook()"
+                          class="flex items-center space-x-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition">
+                    <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                      <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
+                    </svg>
+                    <span>Share</span>
+                  </button>
+
+                  <button (click)="shareOnTwitter()"
+                          class="flex items-center space-x-2 bg-blue-400 text-white px-4 py-2 rounded-lg hover:bg-blue-500 transition">
+                    <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                      <path d="M23.953 4.57a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723c-.951.555-2.005.959-3.127 1.184a4.92 4.92 0 00-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 00-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 01-2.228-.616v.06a4.923 4.923 0 003.946 4.827 4.996 4.996 0 01-2.212.085 4.936 4.936 0 004.604 3.417 9.867 9.867 0 01-6.102 2.105c-.39 0-.779-.023-1.17-.067a13.995 13.995 0 007.557 2.209c9.053 0 13.998-7.496 13.998-13.985 0-.21 0-.42-.015-.63A9.935 9.935 0 0024 4.59z"/>
+                    </svg>
+                    <span>Tweet</span>
+                  </button>
+
+                  <button (click)="copyLink()"
+                          class="flex items-center space-x-2 bg-gray-600 text-white px-4 py-2 rounded-lg hover:bg-gray-700 transition">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path>
+                    </svg>
+                    <span>Copy Link</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <!-- Author Bio -->
+
+      </div>
+
+      <!-- Sidebar -->
+      <div class="lg:col-span-1">
+        <!-- Related News -->
+        <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 mb-2">
+          <div class="flex items-start space-x-4">
+            <!-- Author Avatar -->
+            <div class="relative">
+              <div *ngIf="news?.author?.profileImageUrl;"
+                   class="w-16 h-16 rounded-full flex items-center justify-center flex-shrink-0 overflow-hidden border-2 border-gray-200">
+                <img [src]="news.author.profileImageUrl"
+                     [alt]="news.author.name"
+                     class="w-full h-full object-cover">
+              </div>
+              <!--              <ng-template #initialsAvatar>  else initialsAvatar-->
+              <!--                <div [class]="'w-16 h-16 rounded-full flex items-center justify-center flex-shrink-0 border-2 ' + getAuthorAvatarClass(news?.author?.name)">-->
+              <!--          <span [class]="'font-bold text-xl ' + getAuthorTextClass(news?.author?.name)">-->
+              <!--            {{ getAuthorInitials(news?.author?.name) }}-->
+              <!--          </span>-->
+              <!--                </div>-->
+              <!--              </ng-template>-->
+            </div>
+
+            <div>
+              <h3 class="text-xl font-bold text-gray-800">{{ news?.author?.name || 'News Desk' }}</h3>
+              <p class="text-red-600 font-medium mb-2">{{ news?.author?.designation || 'Senior Correspondent' }}</p>
+              <p class="text-gray-600" [innerHTML]="news?.author?.description | slice:0:150">
+                <!--                {{ news?.author?.bio || getDefaultBio(news?.author?.name, news?.category) }}-->
+              </p>
+            </div>
+          </div>
+        </div>
+        <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 mb-2">
+          <h3 class="text-xl font-bold text-gray-800 mb-4 pb-2 border-b-2 border-red-600 inline-block">
+            Related News
+          </h3>
+          <div class="space-y-4">
+            <div *ngFor="let related of relatedNews"
+                 class="flex items-start space-x-3 group p-3 rounded-lg hover:bg-gray-50 transition border-l-4 border-transparent hover:border-red-500">
+              <div class="flex-shrink-0 w-20 h-16 bg-gray-200 rounded-md overflow-hidden">
+                <img [src]="related.attachmentUrl || related.featured_image" [alt]="related.title" class="w-full h-full object-cover">
+              </div>
+              <div class="flex-1 min-w-0">
+                <h4 class="font-semibold text-gray-800 group-hover:text-red-600 transition line-clamp-2 text-sm leading-tight">
+                  <a [routerLink]="['/news', related.slug]">{{ related.title }}</a>
+                </h4>
+                <p class="text-xs text-gray-500 mt-1">{{ formatDate(related.publishAt || related.created_at) }}</p>
+              </div>
+            </div>
+
+            <div *ngIf="relatedNews.length === 0" class="text-center py-8">
+              <svg class="w-12 h-12 text-gray-300 mx-auto mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z"></path>
+              </svg>
+              <p class="text-gray-500 text-sm">No related news found</p>
+            </div>
+          </div>
+        </div>
+        <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+          <h3 class="font-bold text-gray-800 mb-4">Trending Topics</h3>
+          <div class="flex flex-wrap gap-2">
+            <a *ngFor="let tag of news?.tags || []"
+               href="#"
+               class="px-3 py-1.5 bg-gray-100 text-gray-700 rounded-full text-sm hover:bg-red-100 hover:text-red-700 transition">
+              #{{ tag?.name }}
+            </a>
+          </div>
+        </div>
+
+        <!-- Newsletter Subscription -->
+        <div class="bg-gradient-to-br from-red-500 to-red-600 rounded-xl p-6 text-white mb-2">
+          <h3 class="font-bold text-lg mb-2">Stay Updated</h3>
+          <p class="text-red-100 text-sm mb-4">Get the latest news delivered directly to your inbox.</p>
+          <form class="space-y-3">
+            <input type="email" placeholder="Your email address"
+                   class="w-full px-4 py-2 rounded-lg text-gray-800 focus:outline-none focus:ring-2 focus:ring-white">
+            <button type="submit"
+                    class="w-full bg-white text-red-600 font-semibold py-2 rounded-lg hover:bg-gray-100 transition">
+              Subscribe
+            </button>
+          </form>
+        </div>
+
+        <!-- Trending Tags -->
+
+
+      </div>
+    </div>
+  </div>
+</div>

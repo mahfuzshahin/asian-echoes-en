@@ -1,0 +1,10 @@
+<div class="bg-red-600 text-white py-2 overflow-hidden">
+  <div class="flex items-center">
+    <span class="bg-red-800 px-4 py-1 font-bold text-sm whitespace-nowrap">BREAKING</span>
+    <div class="overflow-hidden flex-1">
+      <div class="breaking-news-ticker whitespace-nowrap">
+        <span *ngFor="let news of breakingNews" class="inline-block mr-8">{{ news }}</span>
+      </div>
+    </div>
+  </div>
+</div>

@@ -4,7 +4,6 @@ import {NewsDetailComponent} from "./news-detail/news-detail.component";
 
 export const routes: Routes = [
   { path: '', component: HomeComponent },
-  { path: 'news/:id', component: NewsDetailComponent },
-  // { path: 'category/:slug', component: CategoryComponent },
+  { path: 'news/:slug', component: NewsDetailComponent },
   { path: '**', redirectTo: '' }
 ];
