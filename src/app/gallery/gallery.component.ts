@@ -24,10 +24,14 @@ export class GalleryComponent implements OnInit{
   showLightbox = false;
   currentLightboxIndex = 0;
 
-  // Pagination
+  // Pagination & Loading
   currentPage = 1;
-  itemsPerPage = 20;
+  itemsPerPage = 8; // Load 4 photos each time
   hasMorePhotos = true;
+  isLoading = false;
+  isInitialLoading = true;
+  totalPhotos = 0;
+  errorMessage = '';
 
   constructor(private photoService: FrontendService) {}
 
@@ -36,29 +40,78 @@ export class GalleryComponent implements OnInit{
   }
 
   loadPhotos() {
-    this.photoService.getLatestNewsGallery().subscribe({
-      next: (photos) => {
-        this.allPhotos = photos.map((photo:any) => ({
-          ...photo,
-          loaded: false
-        }));
-        this.extractCategories();
-        this.applyFilters();
+    this.isInitialLoading = true;
+    this.errorMessage = '';
+
+    this.photoService.getPaginatedGalleries(this.itemsPerPage, 1).subscribe({
+      next: (response: any) => {
+        this.isInitialLoading = false;
+        if (response && response.data) {
+          this.allPhotos = response.data.map((photo: any) => ({
+            ...photo,
+            loaded: false
+          }));
+          this.totalPhotos = response.total || 10; // Assuming total 10 photos from API
+          this.extractCategories();
+          this.applyFilters();
+          this.updateHasMorePhotos();
+        }
       },
       error: (error) => {
+        this.isInitialLoading = false;
+        this.errorMessage = 'Failed to load photos. Please try again.';
         console.error('Error loading photos:', error);
         this.loadSamplePhotos();
       }
     });
   }
 
+  loadMore() {
+    this.isLoading = true;
+    const nextPage = this.currentPage + 1;
+
+    this.photoService.getPaginatedGalleries(this.itemsPerPage, nextPage).subscribe({
+      next: (response: any) => {
+        this.isLoading = false;
+        if (response && response.data && response.data.length > 0) {
+          const newPhotos = response.data.map((photo: any) => ({
+            ...photo,
+            loaded: false
+          }));
+
+          // Add new photos to existing ones
+          this.allPhotos = [...this.allPhotos, ...newPhotos];
+          this.currentPage = nextPage;
+          this.extractCategories();
+          this.applyFilters();
+          this.updateHasMorePhotos();
+        } else {
+          this.hasMorePhotos = false;
+        }
+      },
+      error: (error) => {
+        this.isLoading = false;
+        this.errorMessage = 'Failed to load more photos. Please try again.';
+        console.error('Error loading more photos:', error);
+      }
+    });
+  }
+
+  updateHasMorePhotos() {
+    // Check if we have loaded all available photos
+    this.hasMorePhotos = this.allPhotos.length < this.totalPhotos;
+  }
+
   loadSamplePhotos() {
+    // Sample data with 10 photos
     this.allPhotos = [
       {
         id: 1,
         title: 'Economic Summit 2024',
-        caption: 'World leaders gather for the annual economic summit to discuss global financial policies and future collaborations.',
-        fileUrl: 'http://localhost:3000/uploads/1760124008418-535099395.jpg',
+        caption: 'World leaders gather for the annual economic summit to discuss global financial policies.',
+        attachment: {
+          fileUrl: 'http://localhost:3000/uploads/photo1.jpg'
+        },
         category: 'Events',
         createdAt: new Date('2024-01-15'),
         loaded: false
@@ -67,7 +120,9 @@ export class GalleryComponent implements OnInit{
         id: 2,
         title: 'City Development Project',
         caption: 'New infrastructure project aims to transform urban transportation and reduce congestion.',
-        fileUrl: 'http://localhost:3000/uploads/photo2.jpg',
+        attachment: {
+          fileUrl: 'http://localhost:3000/uploads/photo2.jpg'
+        },
         category: 'Infrastructure',
         createdAt: new Date('2024-01-14'),
         loaded: false
@@ -76,15 +131,100 @@ export class GalleryComponent implements OnInit{
         id: 3,
         title: 'Cultural Festival',
         caption: 'Annual cultural festival celebrates diversity with traditional performances and art exhibitions.',
-        fileUrl: 'http://localhost:3000/uploads/photo3.jpg',
+        attachment: {
+          fileUrl: 'http://localhost:3000/uploads/photo3.jpg'
+        },
         category: 'Culture',
         createdAt: new Date('2024-01-13'),
         loaded: false
       },
-      // Add more sample photos...
+      {
+        id: 4,
+        title: 'Sports Championship',
+        caption: 'National sports championship finals with athletes from across the country.',
+        attachment: {
+          fileUrl: 'http://localhost:3000/uploads/photo4.jpg'
+        },
+        category: 'Sports',
+        createdAt: new Date('2024-01-12'),
+        loaded: false
+      },
+      {
+        id: 5,
+        title: 'Technology Conference',
+        caption: 'Latest innovations showcased at the annual technology conference.',
+        attachment: {
+          fileUrl: 'http://localhost:3000/uploads/photo5.jpg'
+        },
+        category: 'Technology',
+        createdAt: new Date('2024-01-11'),
+        loaded: false
+      },
+      {
+        id: 6,
+        title: 'Environmental Awareness',
+        caption: 'Community event focused on environmental conservation and sustainability.',
+        attachment: {
+          fileUrl: 'http://localhost:3000/uploads/photo6.jpg'
+        },
+        category: 'Environment',
+        createdAt: new Date('2024-01-10'),
+        loaded: false
+      },
+      {
+        id: 7,
+        title: 'Healthcare Symposium',
+        caption: 'Medical professionals discuss advancements in healthcare technology.',
+        attachment: {
+          fileUrl: 'http://localhost:3000/uploads/photo7.jpg'
+        },
+        category: 'Healthcare',
+        createdAt: new Date('2024-01-09'),
+        loaded: false
+      },
+      {
+        id: 8,
+        title: 'Education Fair',
+        caption: 'Annual education fair connecting students with universities and colleges.',
+        attachment: {
+          fileUrl: 'http://localhost:3000/uploads/photo8.jpg'
+        },
+        category: 'Education',
+        createdAt: new Date('2024-01-08'),
+        loaded: false
+      },
+      {
+        id: 9,
+        title: 'Business Networking',
+        caption: 'Entrepreneurs and business leaders network at the annual business event.',
+        attachment: {
+          fileUrl: 'http://localhost:3000/uploads/photo9.jpg'
+        },
+        category: 'Business',
+        createdAt: new Date('2024-01-07'),
+        loaded: false
+      },
+      {
+        id: 10,
+        title: 'Art Exhibition',
+        caption: 'Contemporary art exhibition featuring local and international artists.',
+        attachment: {
+          fileUrl: 'http://localhost:3000/uploads/photo10.jpg'
+        },
+        category: 'Art',
+        createdAt: new Date('2024-01-06'),
+        loaded: false
+      }
     ];
+    this.totalPhotos = this.allPhotos.length;
+
+    // Initially show only first 4 photos
+    const initialPhotos = this.allPhotos.slice(0, this.itemsPerPage);
+    this.allPhotos = initialPhotos.map(photo => ({...photo, loaded: false}));
+
     this.extractCategories();
     this.applyFilters();
+    this.updateHasMorePhotos();
   }
 
   extractCategories() {
@@ -95,12 +235,10 @@ export class GalleryComponent implements OnInit{
   applyFilters() {
     let filtered = [...this.allPhotos];
 
-    // Apply category filter
     if (this.activeFilter !== 'all') {
       filtered = filtered.filter(photo => photo.category === this.activeFilter);
     }
 
-    // Apply search filter
     if (this.searchQuery) {
       const query = this.searchQuery.toLowerCase();
       filtered = filtered.filter(photo =>
@@ -111,9 +249,7 @@ export class GalleryComponent implements OnInit{
     }
 
     this.filteredPhotos = filtered;
-    this.currentPage = 1;
-    this.displayedPhotos = this.filteredPhotos.slice(0, this.itemsPerPage);
-    this.hasMorePhotos = this.displayedPhotos.length < this.filteredPhotos.length;
+    this.displayedPhotos = this.filteredPhotos;
   }
 
   setFilter(filter: string) {
@@ -134,21 +270,10 @@ export class GalleryComponent implements OnInit{
     this.applyFilters();
   }
 
-  loadMore() {
-    this.currentPage++;
-    const startIndex = (this.currentPage - 1) * this.itemsPerPage;
-    const endIndex = startIndex + this.itemsPerPage;
-    const newPhotos = this.filteredPhotos.slice(startIndex, endIndex);
-
-    this.displayedPhotos = [...this.displayedPhotos, ...newPhotos];
-    this.hasMorePhotos = this.displayedPhotos.length < this.filteredPhotos.length;
-  }
-
   onImageLoad(photo: any) {
     photo.loaded = true;
   }
 
-  // Lightbox Methods
   openLightbox(index: number) {
     this.currentLightboxIndex = index;
     this.showLightbox = true;
@@ -170,7 +295,6 @@ export class GalleryComponent implements OnInit{
       : this.currentLightboxIndex - 1;
   }
 
-  // Keyboard navigation for lightbox
   @HostListener('document:keydown', ['$event'])
   handleKeyboardEvent(event: KeyboardEvent) {
     if (!this.showLightbox) return;

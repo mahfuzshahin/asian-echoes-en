@@ -70,8 +70,29 @@ export class FrontendService{
       return of(error.error);
     }));
   }
+  getPaginatedGalleries(limit:any, page:any){
+    return this.httpClient.get(environment.api_url +'/news-gallery/paginated?limit='+limit+'&page='+page).pipe(catchError((error: any, caught: Observable<any>): Observable<any> => {
+      if(error.status === 406){
+        console.log(error.error.message);
+      }else{
+        console.log(error.error.error);
+      }
+      return of(error.error);
+    }));
+  }
   getLatestVideos(){
     return this.httpClient.get(environment.api_url +'/newsVideo/latest').pipe(catchError((error: any, caught: Observable<any>): Observable<any> => {
+      if(error.status === 406){
+        console.log(error.error.message);
+      }else{
+        console.log(error.error.error);
+      }
+      return of(error.error);
+    }));
+  }
+
+  getPaginatedVideos(limit:any, page:any){
+    return this.httpClient.get(environment.api_url +'/newsVideo/paginated?limit='+limit+'&page='+page).pipe(catchError((error: any, caught: Observable<any>): Observable<any> => {
       if(error.status === 406){
         console.log(error.error.message);
       }else{

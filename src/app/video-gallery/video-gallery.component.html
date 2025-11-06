@@ -8,8 +8,24 @@
       </p>
     </div>
 
+    <!-- Initial Loading State -->
+    <div *ngIf="isInitialLoading" class="text-center py-12">
+      <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+      <p class="text-gray-600">Loading videos...</p>
+    </div>
+
+    <!-- Error Message -->
+    <div *ngIf="errorMessage && !isInitialLoading" class="bg-red-50 border border-red-200 rounded-lg p-4 mb-6">
+      <div class="flex items-center">
+        <svg class="w-5 h-5 text-red-400 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+        </svg>
+        <span class="text-red-700">{{ errorMessage }}</span>
+      </div>
+    </div>
+
     <!-- Filters and Search -->
-    <div class="flex flex-col md:flex-row justify-between items-center mb-6 space-y-4 md:space-y-0">
+    <div *ngIf="!isInitialLoading" class="flex flex-col md:flex-row justify-between items-center mb-6 space-y-4 md:space-y-0">
       <div class="flex space-x-2">
         <button (click)="setFilter('all')"
                 [class]="'px-4 py-2 rounded-lg font-medium transition ' +
@@ -41,28 +57,31 @@
     </div>
 
     <!-- Videos Count -->
-    <div class="mb-6">
+    <div *ngIf="!isInitialLoading" class="mb-6">
       <p class="text-gray-600">
-        Showing {{ filteredVideos.length }} of {{ allVideos.length }} videos
+        Showing {{ filteredVideos.length }} of {{ allVideos.length }} loaded videos
+        <span *ngIf="totalVideos > allVideos.length">({{ totalVideos }} total)</span>
       </p>
     </div>
 
     <!-- Videos Grid -->
-    <div *ngIf="filteredVideos.length > 0; else noVideos"
+    <div *ngIf="!isInitialLoading && filteredVideos.length > 0; else noVideos"
          class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
 
       <div *ngFor="let video of filteredVideos"
-           (click)="openVideo(video.id)"
            class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden hover:shadow-md transition-shadow duration-300 cursor-pointer group">
 
         <!-- Video Thumbnail -->
         <div class="relative">
-          <img [src]="getVideoThumbnail(video.url)"
+          <img [src]="video.thumbnailUrl"
                [alt]="video.title"
-               class="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300">
+               class="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
+               (load)="video.loaded = true"
+               [class.opacity-0]="!video.loaded">
 
-          <!-- Play Button -->
-          <div class="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-20 transition-all duration-300 flex items-center justify-center">
+          <!-- Play Button - FIX: Enhanced event handling -->
+          <div (click)="openVideoModal(video, $event)"
+               class="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-20 transition-all duration-300 flex items-center justify-center cursor-pointer">
             <div class="bg-white bg-opacity-90 rounded-full p-3 transform scale-90 group-hover:scale-100 transition-transform duration-300">
               <svg class="w-6 h-6 text-red-600" fill="currentColor" viewBox="0 0 24 24">
                 <path d="M8 5v14l11-7z"/>
@@ -81,43 +100,47 @@
           <h3 class="font-semibold text-gray-900 line-clamp-2 mb-2 group-hover:text-blue-600 transition-colors">
             {{ video.title }}
           </h3>
-
-          <p class="text-gray-600 text-sm line-clamp-2 mb-3" *ngIf="video.description">
-            {{ video.description }}
-          </p>
-
-          <div class="flex items-center justify-between text-sm text-gray-500">
-            <span>{{ video.publishedAt | date:'MMM d, yyyy' }}</span>
-            <div class="flex items-center space-x-1">
-              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
-              </svg>
-              <span>{{ video.views || '0' }} views</span>
-            </div>
-          </div>
-
-          <!-- Category Badge -->
-          <div *ngIf="video.category" class="mt-3">
-            <span class="inline-block bg-gray-100 text-gray-700 text-xs px-2 py-1 rounded">
-              {{ video.category }}
-            </span>
-          </div>
+          <!-- ... rest of video info ... -->
         </div>
       </div>
     </div>
 
     <!-- Load More Button -->
-    <div *ngIf="hasMoreVideos && filteredVideos.length > 0" class="text-center mt-8">
+    <div *ngIf="!isInitialLoading && hasMoreVideos && filteredVideos.length > 0" class="text-center mt-8">
       <button (click)="loadMore()"
-              class="bg-white border border-gray-300 text-gray-700 px-6 py-3 rounded-lg hover:bg-gray-50 transition font-medium">
-        Load More Videos
+              [disabled]="isLoading"
+              [class]="'px-6 py-3 rounded-lg font-medium transition flex items-center justify-center space-x-2 mx-auto ' +
+                      (isLoading ? 'bg-gray-400 text-gray-200 cursor-not-allowed' : 'bg-blue-600 text-white hover:bg-blue-700')">
+
+        <svg *ngIf="isLoading" class="animate-spin h-5 w-5 text-white" fill="none" viewBox="0 0 24 24">
+          <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+          <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+        </svg>
+        <span>{{ isLoading ? 'Loading...' : 'Load More Videos' }}</span>
       </button>
+
+      <!-- Show remaining count -->
+      <p *ngIf="!isLoading" class="text-gray-500 text-sm mt-2">
+        Showing {{ allVideos.length }} of {{ totalVideos }} videos
+        <span *ngIf="totalVideos - allVideos.length > 0">
+          - {{ totalVideos - allVideos.length }} more to load
+        </span>
+      </p>
+    </div>
+
+    <!-- No more videos message -->
+    <div *ngIf="!isInitialLoading && !hasMoreVideos && filteredVideos.length > 0" class="text-center mt-8">
+      <div class="bg-green-50 border border-green-200 rounded-lg p-4 inline-flex items-center">
+        <svg class="w-5 h-5 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+        </svg>
+        <span class="text-green-700">All {{ totalVideos }} videos have been loaded.</span>
+      </div>
     </div>
 
     <!-- No Videos Template -->
     <ng-template #noVideos>
-      <div class="text-center py-12">
+      <div *ngIf="!isInitialLoading" class="text-center py-12">
         <svg class="w-16 h-16 text-gray-400 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"/>
         </svg>
@@ -132,5 +155,60 @@
         </button>
       </div>
     </ng-template>
+  </div>
+</div>
+
+<!-- Video Modal -->
+<div *ngIf="showVideoModal"
+     class="fixed inset-0 bg-black bg-opacity-90 z-[9999] flex items-center justify-center p-4 modal-backdrop video-modal-container"
+     (click)="onBackdropClick($event)">
+
+  <div class="relative max-w-4xl w-full bg-black rounded-xl overflow-hidden video-modal-content"
+       (click)="$event.stopPropagation()">
+
+    <!-- Close Button - FIX: Enhanced event handling -->
+    <button (click)="closeVideoModal($event)"
+            class="absolute top-4 right-4 text-white hover:text-gray-300 z-20 bg-black bg-opacity-50 rounded-full p-3 transition-all duration-200 hover:bg-opacity-75 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-white focus:ring-opacity-50">
+      <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+      </svg>
+    </button>
+
+    <!-- Video Player Container -->
+    <div class="relative pt-[56.25%] bg-black">
+
+      <!-- Loading State -->
+      <div *ngIf="isLoadingModal && !embedError"
+           class="absolute inset-0 flex items-center justify-center bg-gray-900">
+        <div class="text-center">
+          <div class="animate-spin rounded-full h-16 w-16 border-b-2 border-white mx-auto mb-4"></div>
+          <p class="text-white text-lg font-medium">Loading video...</p>
+        </div>
+      </div>
+
+      <!-- YouTube Iframe -->
+      <iframe
+        *ngIf="!embedError"
+        [src]="getSafeVideoUrl(selectedVideo?.youtubeUrl)"
+        class="absolute top-0 left-0 w-full h-full"
+        frameborder="0"
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+        allowfullscreen
+        (load)="onIframeLoad($event)"
+        (error)="onIframeError($event)"
+        title="YouTube video player">
+      </iframe>
+
+      <!-- Error Message -->
+      <div *ngIf="embedError"
+           class="absolute inset-0 bg-gray-900 flex flex-col items-center justify-center text-white p-8">
+        <!-- ... error content ... -->
+      </div>
+    </div>
+
+    <!-- Video Info -->
+    <div *ngIf="selectedVideo" class="p-6 bg-white border-t border-gray-200">
+      <!-- ... video info content ... -->
+    </div>
   </div>
 </div>

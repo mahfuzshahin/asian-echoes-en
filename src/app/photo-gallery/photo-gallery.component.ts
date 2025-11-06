@@ -4,11 +4,12 @@ import {Photo} from "../models/news.model";
 import {SwiperOptions} from "swiper/types";
 import {NewsService} from "../services/news.service";
 import {CommonModule} from "@angular/common";
+import {RouterLink} from "@angular/router";
 
 @Component({
   selector: 'app-photo-gallery',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, RouterLink],
   templateUrl: './photo-gallery.component.html',
   styleUrl: './photo-gallery.component.css'
 })
