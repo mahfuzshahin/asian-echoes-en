@@ -1,0 +1,136 @@
+<div class="min-h-screen bg-gray-50 py-8">
+  <div class="container mx-auto px-4">
+    <!-- Header -->
+    <div class="text-center mb-8">
+      <h1 class="text-4xl font-bold text-gray-900 mb-4">All Videos</h1>
+      <p class="text-lg text-gray-600 max-w-2xl mx-auto">
+        Watch the latest news videos, interviews, and exclusive coverage from our team.
+      </p>
+    </div>
+
+    <!-- Filters and Search -->
+    <div class="flex flex-col md:flex-row justify-between items-center mb-6 space-y-4 md:space-y-0">
+      <div class="flex space-x-2">
+        <button (click)="setFilter('all')"
+                [class]="'px-4 py-2 rounded-lg font-medium transition ' +
+                        (activeFilter === 'all' ? 'bg-blue-600 text-white' : 'bg-white text-gray-700 hover:bg-gray-100')">
+          All Videos
+        </button>
+        <button (click)="setFilter('recent')"
+                [class]="'px-4 py-2 rounded-lg font-medium transition ' +
+                        (activeFilter === 'recent' ? 'bg-blue-600 text-white' : 'bg-white text-gray-700 hover:bg-gray-100')">
+          Most Recent
+        </button>
+        <button (click)="setFilter('popular')"
+                [class]="'px-4 py-2 rounded-lg font-medium transition ' +
+                        (activeFilter === 'popular' ? 'bg-blue-600 text-white' : 'bg-white text-gray-700 hover:bg-gray-100')">
+          Most Popular
+        </button>
+      </div>
+
+      <div class="relative w-full md:w-64">
+        <input type="text"
+               [(ngModel)]="searchQuery"
+               (input)="onSearch()"
+               placeholder="Search videos..."
+               class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+        <svg class="w-5 h-5 text-gray-400 absolute left-3 top-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+        </svg>
+      </div>
+    </div>
+
+    <!-- Videos Count -->
+    <div class="mb-6">
+      <p class="text-gray-600">
+        Showing {{ filteredVideos.length }} of {{ allVideos.length }} videos
+      </p>
+    </div>
+
+    <!-- Videos Grid -->
+    <div *ngIf="filteredVideos.length > 0; else noVideos"
+         class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+
+      <div *ngFor="let video of filteredVideos"
+           (click)="openVideo(video.id)"
+           class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden hover:shadow-md transition-shadow duration-300 cursor-pointer group">
+
+        <!-- Video Thumbnail -->
+        <div class="relative">
+          <img [src]="getVideoThumbnail(video.url)"
+               [alt]="video.title"
+               class="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300">
+
+          <!-- Play Button -->
+          <div class="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-20 transition-all duration-300 flex items-center justify-center">
+            <div class="bg-white bg-opacity-90 rounded-full p-3 transform scale-90 group-hover:scale-100 transition-transform duration-300">
+              <svg class="w-6 h-6 text-red-600" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M8 5v14l11-7z"/>
+              </svg>
+            </div>
+          </div>
+
+          <!-- Duration -->
+          <div class="absolute bottom-3 right-3 bg-black bg-opacity-75 text-white text-xs px-2 py-1 rounded">
+            {{ video.duration || '10:00' }}
+          </div>
+        </div>
+
+        <!-- Video Info -->
+        <div class="p-4">
+          <h3 class="font-semibold text-gray-900 line-clamp-2 mb-2 group-hover:text-blue-600 transition-colors">
+            {{ video.title }}
+          </h3>
+
+          <p class="text-gray-600 text-sm line-clamp-2 mb-3" *ngIf="video.description">
+            {{ video.description }}
+          </p>
+
+          <div class="flex items-center justify-between text-sm text-gray-500">
+            <span>{{ video.publishedAt | date:'MMM d, yyyy' }}</span>
+            <div class="flex items-center space-x-1">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+              </svg>
+              <span>{{ video.views || '0' }} views</span>
+            </div>
+          </div>
+
+          <!-- Category Badge -->
+          <div *ngIf="video.category" class="mt-3">
+            <span class="inline-block bg-gray-100 text-gray-700 text-xs px-2 py-1 rounded">
+              {{ video.category }}
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Load More Button -->
+    <div *ngIf="hasMoreVideos && filteredVideos.length > 0" class="text-center mt-8">
+      <button (click)="loadMore()"
+              class="bg-white border border-gray-300 text-gray-700 px-6 py-3 rounded-lg hover:bg-gray-50 transition font-medium">
+        Load More Videos
+      </button>
+    </div>
+
+    <!-- No Videos Template -->
+    <ng-template #noVideos>
+      <div class="text-center py-12">
+        <svg class="w-16 h-16 text-gray-400 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"/>
+        </svg>
+        <h3 class="text-xl font-medium text-gray-600 mb-2">No Videos Found</h3>
+        <p class="text-gray-500 max-w-md mx-auto">
+          {{ searchQuery ? 'No videos match your search criteria.' : 'There are no videos available at the moment.' }}
+        </p>
+        <button *ngIf="searchQuery"
+                (click)="clearSearch()"
+                class="mt-4 text-blue-600 hover:text-blue-800 font-medium">
+          Clear search
+        </button>
+      </div>
+    </ng-template>
+  </div>
+</div>
