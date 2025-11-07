@@ -14,7 +14,7 @@ export class NavigationComponent {
 
   categories = [
     { name: 'Home', slug: 'home', icon: 'home' },
-    { name: 'National', slug: 'national', icon: 'flag' },
+    { name: 'South Asia', slug: 'south-asia', icon: 'flag' },
     { name: 'Politics', slug: 'politics', icon: 'landmark' },
     { name: 'International', slug: 'international', icon: 'globe' },
     { name: 'Business', slug: 'business', icon: 'trending-up' },

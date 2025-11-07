@@ -132,25 +132,25 @@
         <div class="lg:col-span-3">
           <h2 class="text-2xl font-bold text-gray-800 mb-6 pb-2 border-b-2 border-red-600 inline-block">Latest News</h2>
           <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            <div *ngFor="let news of topStories"
+            <div *ngFor="let news of category_news"
                  class="news-card bg-white rounded-lg shadow-sm overflow-hidden border border-gray-100">
               <div class="relative overflow-hidden">
-                <img [src]="news.imageUrl" [alt]="news.title"
+                <img [src]="news?.news?.attachmentUrl" [alt]="news?.news?.title"
                      class="w-full h-48 object-cover transition duration-500 hover:scale-105">
                 <div class="absolute top-3 left-3">
-              <span [class]="'category-tag text-xs ' + getCategoryColor(news.category)">
-                {{ news.category }}
+              <span [class]="'category-tag text-xs ' + getCategoryColor(news?.category?.name)">
+                {{ news?.category?.name }}
               </span>
                 </div>
               </div>
               <div class="p-4">
                 <h3 class="font-bold text-gray-800 mb-2 hover:text-red-600 transition line-clamp-2">
-                  <a [routerLink]="['/news', news.id]">{{ news.title }}</a>
+                  <a [routerLink]="['/news', news?.news?.id]">{{ news?.news?.title }}</a>
                 </h3>
-                <p class="text-gray-600 text-sm mb-3 line-clamp-2">{{ news.summary }}</p>
+<!--                <p class="text-gray-600 text-sm mb-3 line-clamp-2">{{ news?.news?.content }}</p>-->
                 <div class="flex justify-between items-center text-xs text-gray-500">
-                  <span>{{ news.publishDate | date:'MMM d' }}</span>
-                  <span>{{ news.readTime }} min read</span>
+                  <span>{{ news?.news?.publishAt | date:'medium' }}</span>
+<!--                  <span>{{ news.readTime }} min read</span>-->
                 </div>
               </div>
             </div>
@@ -161,33 +161,33 @@
         <div class="lg:col-span-1">
           <h2 class="text-2xl font-bold text-gray-800 mb-4 pb-2 border-b-2 border-red-600 inline-block">Top Stories</h2>
           <div class="space-y-4">
-            <div *ngFor="let news of topStories"
+            <div *ngFor="let news_value of category_news"
                  class="flex items-start space-x-3 group p-3 rounded-lg hover:bg-gray-50 transition border border-gray-100">
               <div class="flex-shrink-0 w-16 h-12 bg-gray-200 rounded-md overflow-hidden">
-                <img [src]="news.imageUrl" [alt]="news.title" class="w-full h-full object-cover">
+                <img [src]="news_value?.news?.attachmentUrl" [alt]="news_value?.news?.title" class="w-full h-full object-cover">
               </div>
               <div class="flex-1 min-w-0">
                 <h3 class="font-semibold text-gray-800 group-hover:text-red-600 transition line-clamp-2 text-sm leading-tight">
-                  <a [routerLink]="['/news', news.id]">{{ news.title }}</a>
+                  <a [routerLink]="['/news', news_value.id]">{{ news_value?.news?.title }}</a>
                 </h3>
-                <p class="text-xs text-gray-500 mt-1">{{ news.publishDate | date:'shortTime' }} ago</p>
+                <p class="text-xs text-gray-500 mt-1">{{ news_value?.news?.publishAt | date:'medium' }}</p>
               </div>
             </div>
           </div>
 
           <!-- Breaking News Alert -->
-          <div class="mt-6 p-4 bg-red-50 border border-red-200 rounded-lg">
-            <div class="flex items-center space-x-2 mb-2">
-              <svg class="w-5 h-5 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
-              </svg>
-              <span class="font-semibold text-red-800">Breaking News</span>
-            </div>
-            <p class="text-sm text-red-700">Major announcement expected from government regarding new economic policy.</p>
-            <a href="#" class="inline-block mt-2 text-red-600 hover:text-red-800 text-sm font-medium">
-              Read more →
-            </a>
-          </div>
+<!--          <div class="mt-6 p-4 bg-red-50 border border-red-200 rounded-lg">-->
+<!--            <div class="flex items-center space-x-2 mb-2">-->
+<!--              <svg class="w-5 h-5 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">-->
+<!--                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>-->
+<!--              </svg>-->
+<!--              <span class="font-semibold text-red-800">Breaking News</span>-->
+<!--            </div>-->
+<!--            <p class="text-sm text-red-700">Major announcement expected from government regarding new economic policy.</p>-->
+<!--            <a href="#" class="inline-block mt-2 text-red-600 hover:text-red-800 text-sm font-medium">-->
+<!--              Read more →-->
+<!--            </a>-->
+<!--          </div>-->
         </div>
       </div>
     </section>
@@ -199,9 +199,9 @@
       <!-- Main Column -->
       <div class="col-span-12 lg:col-span-9">
         <!-- Sports Section -->
-        <section class="mb-10 pb-8 border-b">
+        <section class="mb-10 pb-8 border-b" *ngFor="let section of categorySections">
           <div class="flex justify-between items-center mb-6">
-            <h2 class="text-2xl font-bold text-gray-800">Sports</h2>
+            <h2 class="text-2xl font-bold text-gray-800">{{ section?.name }}</h2>
             <a href="#" class="text-red-600 font-medium hover:underline flex items-center">
               View All
               <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -211,20 +211,20 @@
           </div>
           <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
             <!-- Main Sports Story -->
-            <div class="news-card rounded-lg overflow-hidden bg-white border border-gray-100" *ngIf="sportsNews[0]">
+            <div class="news-card rounded-lg overflow-hidden bg-white border border-gray-100">
               <div class="relative overflow-hidden">
-                <img [src]="sportsNews[0].imageUrl" [alt]="sportsNews[0].title" class="w-full h-56 object-cover transition duration-500 hover:scale-105">
+                <img [src]="section?.mainNews?.attachmentUrl" [alt]="sportsNews[0].title" class="w-full h-56 object-cover transition duration-500 hover:scale-105">
                 <div class="absolute top-4 left-4">
-                  <span [class]="'category-tag ' + getCategoryColor(sportsNews[0].category)">{{ sportsNews[0].category }}</span>
+                  <span [class]="'category-tag ' + getCategoryColor(section?.name)">{{ section?.name }}</span>
                 </div>
               </div>
               <div class="p-5">
                 <h3 class="text-xl font-bold text-gray-800 mb-3 hover:text-red-600 transition">
-                  <a [routerLink]="['/news', sportsNews[0].id]">{{ sportsNews[0].title }}</a>
+                  <a [routerLink]="['/news', section?.mainNews?.slug]">{{ section?.mainNews?.title }}</a>
                 </h3>
-                <p class="text-gray-600 mb-4">{{ sportsNews[0].summary }}</p>
+                <p class="text-gray-600 mb-4">{{getPlainText(section?.mainNews?.content)}}</p>
                 <div class="flex justify-between items-center text-sm text-gray-500">
-                  <span>By {{ sportsNews[0].author }}</span>
+                  <span>By {{ section?.mainNews?.author?.name }}</span>
                   <span>4 hours ago</span>
                 </div>
               </div>
@@ -232,41 +232,17 @@
 
             <!-- Other Sports Stories -->
             <div class="space-y-6">
-              <div class="flex items-start space-x-4 group p-4 rounded-lg hover:bg-gray-50 transition border border-gray-100">
+              <div *ngFor="let item of section?.otherNews" class="flex items-start space-x-4 group p-4 rounded-lg hover:bg-gray-50 transition border border-gray-100">
                 <div class="flex-shrink-0 w-24 h-20 bg-gray-200 rounded-lg overflow-hidden">
-                  <img src="https://images.unsplash.com/photo-1574629810360-7efbbe195018?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1293&q=80" alt="Football" class="w-full h-full object-cover">
+                  <img [src]="item?.attachmentUrl || 'https://via.placeholder.com/150x100'"
+                       alt="{{ item?.title }}" class="w-full h-full object-cover">
                 </div>
                 <div>
-                  <span class="text-xs font-semibold text-blue-600">FOOTBALL</span>
+<!--                  <span class="text-xs font-semibold text-blue-600">FOOTBALL</span>-->
                   <h4 class="font-semibold text-gray-800 group-hover:text-red-600 transition mt-1">
-                    <a href="#">Local Football League Title Race Heats Up After Derby Win</a>
+                    <a href="#">{{ item?.title }}</a>
                   </h4>
                   <p class="text-xs text-gray-500 mt-1">6 hours ago</p>
-                </div>
-              </div>
-
-              <div class="flex items-start space-x-4 group p-4 rounded-lg hover:bg-gray-50 transition border border-gray-100">
-                <div class="flex-shrink-0 w-24 h-20 bg-gray-200 rounded-lg overflow-hidden">
-                  <img src="https://images.unsplash.com/photo-1551698618-1dfe5d97d256?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1170&q=80" alt="Athletics" class="w-full h-full object-cover">
-                </div>
-                <div>
-                  <span class="text-xs font-semibold text-purple-600">ATHLETICS</span>
-                  <h4 class="font-semibold text-gray-800 group-hover:text-red-600 transition mt-1">
-                    <a href="#">New National Record Set in 100m Sprint at Annual Meet</a>
-                  </h4>
-                  <p class="text-xs text-gray-500 mt-1">1 day ago</p>
-                </div>
-              </div>
-              <div class="flex items-start space-x-4 group p-4 rounded-lg hover:bg-gray-50 transition border border-gray-100">
-                <div class="flex-shrink-0 w-24 h-20 bg-gray-200 rounded-lg overflow-hidden">
-                  <img src="https://images.unsplash.com/photo-1551698618-1dfe5d97d256?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1170&q=80" alt="Athletics" class="w-full h-full object-cover">
-                </div>
-                <div>
-<!--                  <span class="text-xs font-semibold text-purple-600">ATHLETICS</span>-->
-                  <h4 class="font-semibold text-gray-800 group-hover:text-red-600 transition mt-1">
-                    <a href="#">New National Record Set in 100m Sprint at Annual Meet</a>
-                  </h4>
-                  <p class="text-xs text-gray-500 mt-1">1 day ago</p>
                 </div>
               </div>
             </div>

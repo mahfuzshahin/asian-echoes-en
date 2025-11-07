@@ -19,6 +19,9 @@ export class HomeComponent implements OnInit{
   topStories: News[] = [];
   sportsNews: News[] = [];
   latest_news:any;
+  category_news:any[]=[];
+  categories: any[] = [{name:'South Asia', code:'sports'}, {name:'Southeast Asia' ,code: 'southeast-asia'}];
+  categorySections:any[]=[];
 
   constructor(private newsService: NewsService, private service: FrontendService) {}
 
@@ -27,6 +30,8 @@ export class HomeComponent implements OnInit{
     this.loadTopStories();
     this.loadSportsNews();
     this.getLatestNews();
+    this.getLatestNewsFromEachCategory();
+    this.loadAllCategories();
   }
   getLatestNews(){
     this.service.getLatestNews().subscribe((response:any)=>{
@@ -54,10 +59,10 @@ export class HomeComponent implements OnInit{
 
   getCategoryColor(category: string): string {
     const colors: { [key: string]: string } = {
-      'POLITICS': 'bg-red-600',
-      'CRICKET': 'bg-green-600',
-      'FOOTBALL': 'bg-blue-600',
-      'ATHLETICS': 'bg-purple-600',
+      'News': 'bg-red-600',
+      'Sports': 'bg-green-600',
+      'South Asia': 'bg-blue-600',
+      ' Southeast Asia': 'bg-purple-600',
       'HOCKEY': 'bg-yellow-600',
       'INTERNATIONAL': 'bg-indigo-600',
       'BUSINESS': 'bg-emerald-600',
@@ -66,5 +71,48 @@ export class HomeComponent implements OnInit{
       'OPINION': 'bg-orange-600'
     };
     return colors[category] || 'bg-gray-600';
+  }
+
+  getLatestNewsFromEachCategory(){
+    this.service.getLatestNewsFromEachCategory().subscribe((response:any)=>{
+      this.category_news = response.data;
+    })
+  }
+  loadAllCategories() {
+    this.categorySections = []; // reset
+
+    this.categories.forEach((category:any) => {
+      this.service.getCategorySection(category.code).subscribe({
+        next: (res: any) => {
+          if (res.status && res.data) {
+            this.categorySections.push({
+              name: category.name,
+              code: category.code,
+              mainNews: res.data.mainNews || null,
+              otherNews: res.data.otherNews || []
+            });
+          } else {
+            // If no news, push empty arrays
+            this.categorySections.push({
+              name: category.name,
+              code: category.code,
+              mainNews: null,
+              otherNews: []
+            });
+          }
+        },
+        error: err => console.error(`Error fetching category '${category.code}':`, err)
+      });
+    });
+  }
+  getPlainText(html: string): string {
+    if (!html) return '';
+    // Remove all image tags
+    html = html.replace(/<img[^>]*>/g, '');
+    // Remove all other HTML tags
+    const div = document.createElement('div');
+    div.innerHTML = html;
+    const text = div.textContent || div.innerText || '';
+    return text.slice(0, 250); // limit to 250 chars
   }
 }
