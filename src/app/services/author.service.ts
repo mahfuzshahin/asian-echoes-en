@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import {HttpClient} from "@angular/common/http";
 import {catchError, Observable, of} from "rxjs";
-import {environment} from "../../environment/environment";
+import {environment} from "../environment/environment";
 
 @Injectable({
   providedIn: 'root'
@@ -32,5 +32,20 @@ export class AuthorService {
       return of(error.error);
     }));
   }
+  getAuthorPagination(id: string, limit: number = 8, page: number = 1) {
+    return this.httpClient
+      .get(`${environment.api_url}/author/paginated/${id}?limit=${limit}&page=${page}`)
+      .pipe(
+        catchError((error: any, caught: Observable<any>): Observable<any> => {
+          if (error.status === 406) {
+            console.error('Error:', error.error.message);
+          } else {
+            console.error('Error:', error.error.error || error.message);
+          }
+          return of(error.error);
+        })
+      );
+  }
+
 
 }

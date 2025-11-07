@@ -4,6 +4,7 @@ import {NewsDetailComponent} from "./news-detail/news-detail.component";
 import {VideoGalleryComponent} from "./video-gallery/video-gallery.component";
 import {GalleryComponent} from "./gallery/gallery.component";
 import {CategorySectionComponent} from "./category-section/category-section.component";
+import {AuthorComponent} from "./author/author.component";
 
 export const routes: Routes = [
   { path: '', component: HomeComponent },
@@ -14,5 +15,6 @@ export const routes: Routes = [
     path: 'category/:slug',
     component: CategorySectionComponent
   },
+  { path: 'author/:id', component: AuthorComponent },
   { path: '**', redirectTo: '' }
 ];

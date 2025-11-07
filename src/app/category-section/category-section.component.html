@@ -27,225 +27,229 @@
           {{ categoryName }}
         </div>
       </div>
+    </div>
 
-      <!-- Loading State -->
-      <div *ngIf="loading && currentPage === 1" class="text-center py-12">
-        <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-red-600 mx-auto mb-4"></div>
-        <p class="text-gray-600">Loading {{ categoryName.toLowerCase() }} news...</p>
-      </div>
+    <!-- Initial Loading State -->
+    <div *ngIf="loading && currentPage === 1" class="text-center py-12">
+      <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-red-600 mx-auto mb-4"></div>
+      <p class="text-gray-600">Loading {{ categoryName.toLowerCase() }} news...</p>
+    </div>
 
-      <!-- Main News Feature -->
-      <div *ngIf="mainNews && !loading" class="mb-12">
-        <div class="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300">
-          <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <!-- Main News Image -->
-            <div class="relative">
-              <img
-                [src]="mainNews?.attachmentUrl"
-                [alt]="mainNews.title"
-                class="w-full h-80 lg:h-full object-cover"
-              >
-              <div class="absolute top-4 left-4">
+    <!-- Main News Feature -->
+    <div *ngIf="mainNews && !loading" class="mb-12">
+      <div class="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <!-- Main News Image -->
+          <div class="relative">
+            <img
+              [src]="mainNews?.attachmentUrl"
+              [alt]="mainNews?.title"
+              class="w-full h-80 lg:h-full object-cover"
+            >
+            <div class="absolute top-4 left-4">
               <span class="bg-red-600 text-white px-3 py-1 rounded-full text-sm font-medium">
                 Featured Story
               </span>
-              </div>
+            </div>
+          </div>
+
+          <!-- Main News Content -->
+          <div class="p-8 flex flex-col justify-center">
+            <div class="flex items-center text-sm text-gray-500 mb-4">
+              <span class="bg-gray-100 text-gray-700 px-2 py-1 rounded text-xs font-medium">
+                {{ mainNews?.category?.name || categoryName }}
+              </span>
+              <span class="mx-2">•</span>
+              <span>{{ formatDate(mainNews?.publishAt) }}</span>
+              <span class="mx-2">•</span>
+              <span>{{ mainNews?.readTime || getReadTime(mainNews?.content) }}</span>
             </div>
 
-            <!-- Main News Content -->
-            <div class="p-8 flex flex-col justify-center">
-              <div class="flex items-center text-sm text-gray-500 mb-4">
-              <span class="bg-gray-100 text-gray-700 px-2 py-1 rounded text-xs font-medium">
-                {{ mainNews.category || categoryName }}
-              </span>
-                <span class="mx-2">•</span>
-                <span>{{ mainNews.publishAt | date:'medium' }}</span>
-                <span class="mx-2">•</span>
-                <span>{{ mainNews.readTime || getReadTime(mainNews.content) }}</span>
-              </div>
+            <h2 class="text-3xl lg:text-4xl font-bold text-gray-900 mb-4 leading-tight">
+              {{ mainNews?.title }}
+            </h2>
 
-              <h2 class="text-3xl lg:text-4xl font-bold text-gray-900 mb-4 leading-tight">
-                {{ mainNews?.title }}
-              </h2>
+            <p *ngIf="mainNews?.content" class="text-lg text-gray-600 mb-6 leading-relaxed">
+              {{getPlainText(mainNews?.content)}}
+            </p>
 
-              <p *ngIf="mainNews.content" class="text-lg text-gray-600 mb-6 leading-relaxed" >
-                {{getPlainText(mainNews?.content)}}
-              </p>
-
-              <div class="flex items-center justify-between mt-auto">
-                <div class="flex items-center">
+            <div class="flex items-center justify-between mt-auto">
+              <div class="flex items-center">
                 <span *ngIf="mainNews?.author" class="text-sm text-gray-700 font-medium">
                   By {{ mainNews?.author?.name }}
                 </span>
-                </div>
-                <a
-                  [routerLink]="['/news', mainNews?.slug]"
-                  class="bg-red-600 hover:bg-red-700 text-white px-6 py-3 rounded-lg font-medium transition duration-300 inline-flex items-center"
-                >
-                  Read Full Story
-                  <svg class="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/>
-                  </svg>
-                </a>
               </div>
+              <a
+                [routerLink]="['/news', mainNews.slug]"
+                class="bg-red-600 hover:bg-red-700 text-white px-6 py-3 rounded-lg font-medium transition duration-300 inline-flex items-center"
+              >
+                Read Full Story
+                <svg class="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/>
+                </svg>
+              </a>
             </div>
           </div>
         </div>
       </div>
+    </div>
 
-      <!-- Other News Section -->
-      <div *ngIf="otherNews.length > 0" class="mb-8">
-        <!-- Section Header -->
-        <div class="flex justify-between items-center mb-8">
-          <h3 class="text-2xl lg:text-3xl font-bold text-gray-900">
-            More {{ categoryName }} Stories
-          </h3>
-          <div class="text-sm text-gray-500">
-            {{ otherNews.length }} articles
-          </div>
+    <!-- Other News Section -->
+    <div *ngIf="otherNews.length > 0" class="mb-8">
+      <!-- Section Header -->
+      <div class="flex justify-between items-center mb-8">
+        <h3 class="text-2xl lg:text-3xl font-bold text-gray-900">
+          More {{ categoryName }} Stories
+        </h3>
+        <div class="text-sm text-gray-500">
+          Page {{ currentPage }} of {{ totalPages }}
         </div>
+      </div>
 
-        <!-- Other News Grid -->
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mb-8">
-          <div
-            *ngFor="let news of otherNews"
-            class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden hover:shadow-md transition-all duration-300 group"
-          >
-            <!-- News Image -->
-            <div class="relative overflow-hidden">
-              <img
-                [src]="news.attachmentUrl"
-                [alt]="news.title"
-                class="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
-              >
-              <div class="absolute top-3 left-3">
+      <!-- Other News Grid -->
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mb-8">
+        <div
+          *ngFor="let news of otherNews"
+          class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden hover:shadow-md transition-all duration-300 group"
+        >
+          <!-- News Image -->
+          <div class="relative overflow-hidden">
+            <img
+              [src]="news?.attachmentUrl"
+              [alt]="news?.title"
+              class="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
+            >
+            <div class="absolute top-3 left-3">
               <span class="bg-white bg-opacity-90 text-gray-700 px-2 py-1 rounded text-xs font-medium">
                 {{ news.category || categoryName }}
               </span>
-              </div>
+            </div>
+          </div>
+
+          <!-- News Content -->
+          <div class="p-4">
+            <div class="flex items-center text-xs text-gray-500 mb-2">
+              <span>{{ formatDate(news?.publishAt) }}</span>
+              <span class="mx-2">•</span>
+              <span>{{ news?.readTime || getReadTime(news?.content) }}</span>
             </div>
 
-            <!-- News Content -->
-            <div class="p-4">
-              <div class="flex items-center text-xs text-gray-500 mb-2">
-                <span>{{ formatDate(news.publishAt) }}</span>
-                <span class="mx-2">•</span>
-                <span>{{ news.readTime || getReadTime(news?.content) }}</span>
-              </div>
+            <h4 class="font-bold text-gray-900 mb-3 line-clamp-2 group-hover:text-red-600 transition-colors leading-tight">
+              <a [routerLink]="['/news', news.slug]" class="hover:underline">
+                {{ news?.title }}
+              </a>
+            </h4>
 
-              <h4 class="font-bold text-gray-900 mb-3 line-clamp-2 group-hover:text-red-600 transition-colors leading-tight">
-                <a [routerLink]="['/news', news?.slug]" class="hover:underline">
-                  {{ news?.title }}
-                </a>
-              </h4>
+            <p *ngIf="news.content" class="text-sm text-gray-600 line-clamp-3 mb-4 leading-relaxed">
+              {{ getPlainText(news?.content) }}
+            </p>
 
-              <p *ngIf="news.content" class="text-sm text-gray-600 line-clamp-3 mb-4 leading-relaxed">
-                {{ getPlainText(news?.content) }}
-
-              </p>
-
-              <div class="flex items-center justify-between pt-3 border-t border-gray-100">
-              <span *ngIf="news?.author" class="text-xs text-gray-500">
+            <div class="flex items-center justify-between pt-3 border-t border-gray-100">
+              <span *ngIf="news.author" class="text-xs text-gray-500">
                 {{ news?.author?.name }}
               </span>
-                <a
-                  [routerLink]="['/news', news.slug]"
-                  class="text-red-600 hover:text-red-700 text-sm font-medium inline-flex items-center"
-                >
-                  Read More
-                  <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
-                  </svg>
-                </a>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Load More Button -->
-        <div *ngIf="hasMoreNews" class="text-center mt-8">
-          <button
-            (click)="loadMore()"
-            [disabled]="isLoadingMore || loading"
-            [class]="'px-8 py-4 rounded-lg font-medium transition flex items-center justify-center space-x-3 mx-auto ' +
-                  ((isLoadingMore || loading) ? 'bg-gray-400 text-gray-200 cursor-not-allowed' : 'bg-red-600 text-white hover:bg-red-700')"
-          >
-            <svg *ngIf="isLoadingMore" class="animate-spin h-5 w-5 text-white" fill="none" viewBox="0 0 24 24">
-              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-              <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-            </svg>
-            <span class="text-lg">
-            {{ isLoadingMore ? 'Loading More News...' : 'Load More News' }}
-          </span>
-          </button>
-
-          <!-- Progress Indicator -->
-          <p *ngIf="!isLoadingMore" class="text-gray-500 text-sm mt-3">
-            Page {{ currentPage }} of {{ totalPages }}
-            <span *ngIf="totalPages > 1 && hasMoreNews">
-            - {{ totalPages - currentPage }} more pages to load
-          </span>
-          </p>
-
-          <!-- Debug Info (remove in production) -->
-          <div *ngIf="false" class="mt-4 p-3 bg-yellow-100 rounded-lg text-xs">
-            <p>Debug Info:</p>
-            <p>Current Page: {{ currentPage }}</p>
-            <p>Total Pages: {{ totalPages }}</p>
-            <p>Has More: {{ hasMoreNews }}</p>
-            <p>Articles Loaded: {{ otherNews.length }}</p>
-            <p>Total Articles: {{ totalArticles }}</p>
-          </div>
-        </div>
-
-        <!-- No More News Message -->
-        <div *ngIf="!hasMoreNews && otherNews.length > 0" class="text-center mt-8">
-          <div class="bg-green-50 border border-green-200 rounded-xl p-6 inline-flex items-center">
-            <svg class="w-6 h-6 text-green-500 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
-            </svg>
-            <div class="text-left">
-              <p class="text-green-700 font-medium">All {{ categoryName }} news loaded!</p>
-              <p class="text-green-600 text-sm">
-                You've viewed all {{ getTotalArticlesLoaded() }}
-                {{ getTotalArticlesLoaded() === 1 ? 'article' : 'articles' }}.
-                <span *ngIf="totalArticles > 0">
-                (Total available: {{ totalArticles }})
-              </span>
-              </p>
+              <a
+                [routerLink]="['/news', news?.slug]"
+                class="text-red-600 hover:text-red-700 text-sm font-medium inline-flex items-center"
+              >
+                Read More
+                <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                </svg>
+              </a>
             </div>
           </div>
         </div>
       </div>
 
-
-      <!-- No News Available -->
-      <div *ngIf="!loading && otherNews.length === 0 && !mainNews" class="text-center py-16">
-        <div class="max-w-md mx-auto">
-          <svg class="w-24 h-24 text-gray-400 mx-auto mb-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9m0 0v12m0 0h6m-6 0h6"/>
+      <!-- Load More Button -->
+      <div *ngIf="hasMoreNews" class="text-center mt-8">
+        <button
+          (click)="loadMore()"
+          [disabled]="isLoadingMore || loading"
+          [class]="'px-8 py-4 rounded-lg font-medium transition flex items-center justify-center space-x-3 mx-auto ' +
+                  ((isLoadingMore || loading) ? 'bg-gray-400 text-gray-200 cursor-not-allowed' : 'bg-red-600 text-white hover:bg-red-700')"
+        >
+          <svg *ngIf="isLoadingMore" class="animate-spin h-5 w-5 text-white" fill="none" viewBox="0 0 24 24">
+            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
           </svg>
-          <h3 class="text-2xl font-bold text-gray-600 mb-3">No {{ categoryName }} News Available</h3>
-          <p class="text-gray-500 mb-6">
-            There are no news articles available in {{ categoryName.toLowerCase() }} at the moment.
+          <span class="text-lg">
+            {{ isLoadingMore ? 'Loading More News...' : 'Load More News' }}
+          </span>
+        </button>
+
+        <!-- Progress Indicator -->
+        <div *ngIf="!isLoadingMore" class="mt-4 space-y-2">
+          <p class="text-gray-500 text-sm">
+            Showing page {{ currentPage }} of {{ totalPages }}
           </p>
-          <div class="flex flex-col sm:flex-row gap-3 justify-center">
-            <a
-              routerLink="/news"
-              class="bg-red-600 hover:bg-red-700 text-white px-6 py-3 rounded-lg font-medium transition duration-300 inline-flex items-center justify-center"
-            >
-              <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
-              </svg>
-              Back to All News
-            </a>
-            <a
-              routerLink="/"
-              class="bg-gray-600 hover:bg-gray-700 text-white px-6 py-3 rounded-lg font-medium transition duration-300 inline-flex items-center justify-center"
-            >
-              Go to Homepage
-            </a>
+          <p class="text-gray-400 text-xs">
+            Loaded {{ getTotalArticlesLoaded() }} articles
+            <span *ngIf="totalArticles > 0">
+              of {{ totalArticles }} total
+            </span>
+          </p>
+          <div *ngIf="getRemainingPages() > 0" class="text-green-600 text-xs">
+            {{ getRemainingPages() }} more page{{ getRemainingPages() > 1 ? 's' : '' }} available
           </div>
+        </div>
+      </div>
+
+      <!-- No More News Message -->
+      <div *ngIf="!hasMoreNews && otherNews.length > 0" class="text-center mt-8">
+        <div class="bg-green-50 border border-green-200 rounded-xl p-6">
+          <div class="flex items-center justify-center mb-2">
+            <svg class="w-6 h-6 text-green-500 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+            </svg>
+            <span class="text-green-700 font-medium text-lg">All News Loaded!</span>
+          </div>
+          <p class="text-green-600 text-sm">
+            You've reached the end of {{ categoryName }} news.
+          </p>
+          <p class="text-green-600 text-sm mt-1">
+            Viewed all {{ getTotalArticlesLoaded() }} articles
+            <span *ngIf="totalArticles > 0">
+              ({{ totalArticles }} total available)
+            </span>
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Loading More Indicator -->
+    <div *ngIf="isLoadingMore" class="text-center py-8">
+      <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-red-600 mx-auto mb-2"></div>
+      <p class="text-gray-600 text-sm">Loading page {{ currentPage + 1 }} of {{ totalPages }}...</p>
+    </div>
+
+    <!-- No News Available -->
+    <div *ngIf="!loading && !isLoadingMore && otherNews.length === 0 && !mainNews" class="text-center py-16">
+      <div class="max-w-md mx-auto">
+        <svg class="w-24 h-24 text-gray-400 mx-auto mb-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9m0 0v12m0 0h6m-6 0h6"/>
+        </svg>
+        <h3 class="text-2xl font-bold text-gray-600 mb-3">No {{ categoryName }} News Available</h3>
+        <p class="text-gray-500 mb-6">
+          There are no news articles available in {{ categoryName.toLowerCase() }} at the moment.
+        </p>
+        <div class="flex flex-col sm:flex-row gap-3 justify-center">
+          <a
+            routerLink="/news"
+            class="bg-red-600 hover:bg-red-700 text-white px-6 py-3 rounded-lg font-medium transition duration-300 inline-flex items-center justify-center"
+          >
+            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
+            </svg>
+            Back to All News
+          </a>
+          <a
+            routerLink="/"
+            class="bg-gray-600 hover:bg-gray-700 text-white px-6 py-3 rounded-lg font-medium transition duration-300 inline-flex items-center justify-center"
+          >
+            Go to Homepage
+          </a>
         </div>
       </div>
     </div>
