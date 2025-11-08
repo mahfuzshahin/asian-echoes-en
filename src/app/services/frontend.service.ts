@@ -19,6 +19,16 @@ export class FrontendService{
       return of(error.error);
     }));
   }
+  findBreakingNews(){
+    return this.httpClient.get(environment.api_url +'/news/breaking').pipe(catchError((error: any, caught: Observable<any>): Observable<any> => {
+      if(error.status === 406){
+        console.log(error.error.message);
+      }else{
+        console.log(error.error.error);
+      }
+      return of(error.error);
+    }));
+  }
   getNewsBySlug(slug:string){
     return this.httpClient.get(`${environment.api_url}/news/slug/${slug}`).pipe(catchError((error: any, caught: Observable<any>): Observable<any> => {
       if(error.status === 406){

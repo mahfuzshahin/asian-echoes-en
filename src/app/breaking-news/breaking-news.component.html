@@ -1,9 +1,17 @@
 <div class="bg-red-600 text-white py-2 overflow-hidden">
   <div class="flex items-center">
-    <span class="bg-red-800 px-4 py-1 font-bold text-sm whitespace-nowrap">BREAKING</span>
+    <span class="bg-red-800 px-4 py-1 font-bold text-sm whitespace-nowrap flex items-center">
+      <span class="w-2 h-2 bg-white rounded-full animate-pulse mr-2"></span>
+      LIVE
+    </span>
     <div class="overflow-hidden flex-1">
       <div class="breaking-news-ticker whitespace-nowrap">
-        <span *ngFor="let news of breakingNews" class="inline-block mr-8">{{ news }}</span>
+        <ng-container *ngFor="let news of breakingNews; let last = last">
+          <span class="inline-block mr-4 cursor-pointer hover:underline" [routerLink]="['/news', news.slug]">
+            {{ news?.title }}
+          </span>
+          <span *ngIf="!last" class="inline-block w-px h-4 bg-white mx-4 opacity-60"></span>
+        </ng-container>
       </div>
     </div>
   </div>

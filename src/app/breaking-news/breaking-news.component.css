@@ -1,0 +1,14 @@
+.breaking-news-ticker {
+  display: inline-block;
+  animation: scroll-left 40s linear infinite;
+  will-change: transform;
+}
+
+.breaking-news-ticker:hover {
+  animation-play-state: paused;
+}
+
+@keyframes scroll-left {
+  0% { transform: translateX(100%); }
+  100% { transform: translateX(-100%); }
+}
