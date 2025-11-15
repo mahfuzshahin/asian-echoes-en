@@ -15,6 +15,7 @@ import {ActivatedRoute, RouterLink} from "@angular/router";
 export class CategorySectionComponent implements OnInit{
   slug: string = '';
   categoryName: string = '';
+  categorySlug: string = '';
 
   mainNews: any | null = null;
   otherNews: any[] = [];
@@ -35,6 +36,7 @@ export class CategorySectionComponent implements OnInit{
     this.route.paramMap.subscribe(params => {
       this.slug = params.get('slug') || '';
       this.categoryName = this.formatCategoryName(this.slug);
+      this.categorySlug = this.slug;
 
       // Reset state when slug changes
       this.resetState();

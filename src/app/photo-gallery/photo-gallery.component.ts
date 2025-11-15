@@ -5,6 +5,7 @@ import {SwiperOptions} from "swiper/types";
 import {NewsService} from "../services/news.service";
 import {CommonModule} from "@angular/common";
 import {RouterLink} from "@angular/router";
+import {FrontendService} from "../services/frontend.service";
 
 @Component({
   selector: 'app-photo-gallery',
@@ -14,13 +15,13 @@ import {RouterLink} from "@angular/router";
   styleUrl: './photo-gallery.component.css'
 })
 export class PhotoGalleryComponent implements OnInit{
-  photos: Photo[] = [];
+  photos: any[] = [];
 
-  constructor(private newsService: NewsService) {}
+  constructor(private photoService: FrontendService) {}
 
   ngOnInit(): void {
-    this.newsService.getGalleryPhotos().subscribe(photos => {
-      this.photos = photos;
+    this.photoService.getLatestNewsGallery().subscribe(photos => {
+      this.photos = photos.data;
     });
   }
 }

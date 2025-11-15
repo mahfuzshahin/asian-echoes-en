@@ -20,7 +20,14 @@ export class HomeComponent implements OnInit{
   sportsNews: News[] = [];
   latest_news:any;
   category_news:any[]=[];
-  categories: any[] = [{name:'South Asia', code:'sports'}, {name:'Southeast Asia' ,code: 'southeast-asia'}];
+  categories: any[] = [{name:'South Asia', code:'sports'},
+    {name:'Southeast Asia' ,code: 'southeast-asia'},
+    {name:'Opinion' ,code: 'opinion'},
+    {name:'Editorial' ,code: 'editorial'},
+    {name:'What\'s thinking Youths?' ,code: 'what-s-thinking-youths'},
+    {name:'Diplomatic views' ,code: 'diplomatic-views'},
+    {name:'Politics' ,code: 'politics'},
+  ];
   categorySections:any[]=[];
 
   constructor(private newsService: NewsService, private service: FrontendService) {}

@@ -12,7 +12,7 @@
     <a *ngFor="let photo of photos"
        href="#"
        class="relative group block overflow-hidden rounded-xl news-card">
-      <img [src]="photo.url" [alt]="photo.caption" class="w-full h-40 object-cover transition duration-500 group-hover:scale-110">
+      <img [src]="photo?.attachment?.fileUrl" [alt]="photo.caption" class="w-full h-40 object-cover transition duration-500 group-hover:scale-110">
       <div class="absolute inset-0 bg-black bg-opacity-40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition">
         <div class="text-white text-center">
           <svg class="w-8 h-8 mx-auto mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">

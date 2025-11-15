@@ -15,13 +15,14 @@ export class NavigationComponent {
   categories = [
     { name: 'Home', slug: 'home', icon: 'home' },
     { name: 'South Asia', slug: 'south-asia', icon: 'flag' },
+    { name: 'Southeast Asia', slug: 'southeast-asia', icon: 'flag' },
+    { name: 'Opinion', slug: 'opinion', icon: 'globe' },
+    { name: 'Editorial', slug: 'editorial', icon: 'trending-up' },
+    { name: 'What\'s thinking Youths?', slug: 'what-s-thinking-youths', icon: 'trophy' },
+    { name: 'Diplomatic views', slug: 'diplomatic-views', icon: 'film' },
+    // { name: 'Technology', slug: 'technology', icon: 'cpu' },
     { name: 'Politics', slug: 'politics', icon: 'landmark' },
-    { name: 'International', slug: 'international', icon: 'globe' },
-    { name: 'Business', slug: 'business', icon: 'trending-up' },
-    { name: 'Sports', slug: 'sports', icon: 'trophy' },
-    { name: 'Entertainment', slug: 'entertainment', icon: 'film' },
-    { name: 'Technology', slug: 'technology', icon: 'cpu' },
-    { name: 'Opinion', slug: 'opinion', icon: 'message-square' }
+    { name: 'Videos', slug: 'videos ', icon: 'message-square' },
   ];
 
   toggleMobileMenu(): void {
