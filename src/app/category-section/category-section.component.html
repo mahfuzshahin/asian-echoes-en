@@ -37,7 +37,7 @@
 
     <!-- Main News Feature -->
     <div *ngIf="mainNews && !loading" class="mb-12">
-      <div class="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300">
+      <div class="bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300">
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
           <!-- Main News Image -->
           <div class="relative">
@@ -107,10 +107,10 @@
       </div>
 
       <!-- Other News Grid -->
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mb-8">
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-2 mb-2">
         <div
           *ngFor="let news of otherNews"
-          class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden hover:shadow-md transition-all duration-300 group"
+          class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden hover:shadow-md transition-all duration-300 group"
         >
           <!-- News Image -->
           <div class="relative overflow-hidden">
@@ -134,7 +134,7 @@
               <span>{{ news?.readTime || getReadTime(news?.content) }}</span>
             </div>
 
-            <h4 class="font-bold text-gray-900 mb-3 line-clamp-2 group-hover:text-red-600 transition-colors leading-tight">
+            <h4 class="font-bold text-gray-900 mb-2 group-hover:text-red-600 transition-colors leading-tight">
               <a [routerLink]="['/news', news.slug]" class="hover:underline">
                 {{ news?.title }}
               </a>

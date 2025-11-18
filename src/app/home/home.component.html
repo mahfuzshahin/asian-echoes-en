@@ -72,7 +72,7 @@
 
         <!-- Right Side: Image -->
         <div class="order-1 lg:order-2 lg:col-span-1 flex items-center justify-center">
-          <div *ngIf="featuredNews[0]" class="relative overflow-hidden rounded-xl news-card group w-full">
+          <div *ngIf="featuredNews[0]" class="relative overflow-hidden rounded-lg news-card group w-full">
 
             <div class="absolute top-4 right-4 z-10">
           <span class="bg-white bg-opacity-90 text-red-600 px-3 py-1 rounded-full text-xs font-semibold">
@@ -107,37 +107,55 @@
 
     <!-- Top Stories Section (Below the Hero) -->
     <section class="mb-10">
-      <div class="grid grid-cols-1 lg:grid-cols-4 gap-8">
-        <!-- Main Top Stories -->
+      <div class="grid grid-cols-1 lg:grid-cols-4 gap-2">
         <div class="lg:col-span-3">
-          <h2 class="text-2xl font-bold text-gray-800 mb-6 pb-2 border-b-2 border-red-600 inline-block">Latest News</h2>
-          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <h2 class="text-xl sm:text-2xl font-bold text-gray-800 mb-4 sm:mb-6 pb-2 border-b-2 border-red-600 inline-block">
+            Latest News
+          </h2>
+
+          <!-- Responsive grid -->
+          <div class="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-2 sm:gap-3">
+
             <div *ngFor="let news of category_news"
                  class="news-card bg-white rounded-lg shadow-sm overflow-hidden border border-gray-100">
+
               <div class="relative overflow-hidden">
-                <img [src]="news?.news?.attachmentUrl" [alt]="news?.news?.title"
-                     class="w-full h-48 object-cover transition duration-500 hover:scale-105">
-                <div class="absolute top-3 left-3">
-              <span [class]="'category-tag text-xs ' + getCategoryColor(news?.category?.name)">
-                {{ news?.category?.name }}
-              </span>
+                <!-- Responsive Image Height -->
+                <img
+                  [src]="news?.news?.attachmentUrl"
+                  [alt]="news?.news?.title"
+                  class="w-full
+                 h-28    <!-- small mobile -->
+                 sm:h-36 <!-- larger mobile / small tablets -->
+                 md:h-44 <!-- tablets -->
+                 lg:h-48 <!-- desktop -->
+                 object-cover transition duration-500 hover:scale-105">
+
+                <div class="absolute top-2 left-2 sm:top-3 sm:left-3">
+          <span
+            [class]="'category-tag text-[10px] sm:text-xs px-1.5 py-0.5 sm:px-2 sm:py-1 ' + getCategoryColor(news?.category?.name)">
+            {{ news?.category?.name }}
+          </span>
                 </div>
               </div>
-              <div class="p-4">
-                <h3 class="font-bold text-gray-800 mb-2 hover:text-red-600 transition line-clamp-2">
-                  <a [routerLink]="['/news', news?.news?.id]">{{ news?.news?.title }}</a>
+
+              <div class="p-3 sm:p-4">
+                <h3 class="font-semibold sm:font-bold text-gray-800 mb-1.5 sm:mb-2 hover:text-red-600 transition line-clamp-2 text-sm sm:text-base leading-snug">
+                  <a [routerLink]="['/news', news?.news?.slug]">
+                    {{ news?.news?.title }}
+                  </a>
                 </h3>
-<!--                <p class="text-gray-600 text-sm mb-3 line-clamp-2">{{ news?.news?.content }}</p>-->
-                <div class="flex justify-between items-center text-xs text-gray-500">
+
+                <div class="flex justify-between items-center text-[10px] sm:text-xs text-gray-500">
                   <span>{{ news?.news?.publishAt | date:'medium' }}</span>
-<!--                  <span>{{ news.readTime }} min read</span>-->
                 </div>
               </div>
+
             </div>
           </div>
         </div>
 
-        <!-- Quick Links Sidebar -->
+
         <div class="lg:col-span-1">
           <h2 class="text-2xl font-bold text-gray-800 mb-4 pb-2 border-b-2 border-red-600 inline-block">Top Stories</h2>
           <div class="space-y-4">
@@ -172,57 +190,89 @@
       </div>
     </section>
 
-
-
     <!-- Category Sections -->
-    <div class="grid grid-cols-12 gap-8">
+    <div class="grid grid-cols-12 gap-2">
       <!-- Main Column -->
       <div class="col-span-12 lg:col-span-9">
-        <!-- Sports Section -->
-        <section class="mb-10 pb-8 border-b" *ngFor="let section of categorySections">
-          <div class="flex justify-between items-center mb-6">
-            <h2 class="text-2xl font-bold text-gray-800">{{ section?.name }}</h2>
-            <a href="#" class="text-red-600 font-medium hover:underline flex items-center">
+        <section
+          class="mb-2 sm:mb-10 pb-2 sm:pb-8 border-b"
+          *ngFor="let section of categorySections">
+
+          <div
+            class="flex justify-between items-center mb-2 sm:mb-6"
+            *ngIf="section.mainNews">
+
+            <h2 class="text-xl sm:text-2xl font-bold text-gray-800">
+              {{ section?.name }}
+            </h2>
+
+            <a
+              [routerLink]="['/category', section?.code]"
+              class="text-red-600 font-medium hover:underline flex items-center text-sm sm:text-base">
               View All
-              <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg class="w-3 h-3 sm:w-4 sm:h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
               </svg>
             </a>
           </div>
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-            <!-- Main Sports Story -->
-            <div class="news-card rounded-lg overflow-hidden bg-white border border-gray-100">
+
+          <!-- Grid responsive -->
+          <div
+            class="grid grid-cols-1 md:grid-cols-2 gap-2 sm:gap-4"
+            *ngIf="section.mainNews">
+            <!-- Main News -->
+            <div class="news-card rounded-lg overflow-hidden bg-white border border-gray-100 shadow-sm">
               <div class="relative overflow-hidden">
-                <img [src]="section?.mainNews?.attachmentUrl" [alt]="sportsNews[0].title" class="w-full h-56 object-cover transition duration-500 hover:scale-105">
-                <div class="absolute top-4 left-4">
-                  <span [class]="'category-tag ' + getCategoryColor(section?.name)">{{ section?.name }}</span>
+                <img
+                  [src]="section?.mainNews?.attachmentUrl"
+                  [alt]="section?.mainNews?.title"
+                  class="w-full h-44 sm:h-56 md:h-64 object-cover transition duration-500 hover:scale-105">
+
+                <div class="absolute top-3 left-3 sm:top-4 sm:left-4">
+                  <span [class]="'category-tag ' + getCategoryColor(section?.name)">
+                    {{ section?.name }}
+                  </span>
                 </div>
               </div>
-              <div class="p-5">
-                <h3 class="text-xl font-bold text-gray-800 mb-3 hover:text-red-600 transition">
-                  <a [routerLink]="['/news', section?.mainNews?.slug]">{{ section?.mainNews?.title }}</a>
+
+              <div class="p-4 sm:p-5">
+                <h3 class="text-lg sm:text-xl font-bold text-gray-800 mb-2 sm:mb-3 hover:text-red-600 transition leading-snug">
+                  <a [routerLink]="['/news', section?.mainNews?.slug]">
+                    {{ section?.mainNews?.title }}
+                  </a>
                 </h3>
-                <p class="text-gray-600 mb-4">{{getPlainText(section?.mainNews?.content)}}</p>
-                <div class="flex justify-between items-center text-sm text-gray-500">
-                  <a *ngIf="section?.mainNews?.author?.id" [routerLink]="['/author', section?.mainNews?.author?.id]" class="block">
-                  <span>By {{ section?.mainNews?.author?.name }}</span>
+                <p class="text-gray-600 text-sm sm:text-base mb-3 sm:mb-4 line-clamp-3">
+                  {{ getPlainText(section?.mainNews?.content) }}
+                </p>
+
+                <div class="flex justify-between items-center text-xs sm:text-sm text-gray-500">
+                  <a
+                    *ngIf="section?.mainNews?.author?.id"
+                    [routerLink]="['/author', section?.mainNews?.author?.id]"
+                    class="hover:text-red-600">
+                    By {{ section?.mainNews?.author?.name }}
                   </a>
                   <span>4 hours ago</span>
                 </div>
               </div>
             </div>
 
-            <!-- Other Sports Stories -->
-            <div class="space-y-6">
-              <div *ngFor="let item of section?.otherNews" class="flex items-start space-x-4 group p-4 rounded-lg hover:bg-gray-50 transition border border-gray-100">
-                <div class="flex-shrink-0 w-24 h-20 bg-gray-200 rounded-lg overflow-hidden">
-                  <img [src]="item?.attachmentUrl || 'https://via.placeholder.com/150x100'"
-                       alt="{{ item?.title }}" class="w-full h-full object-cover">
+            <!-- Other News -->
+            <div class="space-y-4 sm:space-y-6">
+              <div
+                *ngFor="let item of section?.otherNews"
+                class="flex items-start space-x-3 sm:space-x-4 group p-3 sm:p-4 rounded-lg hover:bg-gray-50 transition border border-gray-100">
+
+                <div class="flex-shrink-0 w-20 h-16 sm:w-24 sm:h-20 bg-gray-200 rounded-lg overflow-hidden">
+                  <img
+                    [src]="item?.attachmentUrl || 'https://via.placeholder.com/150x100'"
+                    alt="{{ item?.title }}"
+                    class="w-full h-full object-cover">
                 </div>
+
                 <div>
-<!--                  <span class="text-xs font-semibold text-blue-600">FOOTBALL</span>-->
-                  <h4 class="font-semibold text-gray-800 group-hover:text-red-600 transition mt-1">
-                    <a href="#">{{ item?.title }}</a>
+                  <h4 class="font-semibold text-gray-800 group-hover:text-red-600 transition mt-0.5 sm:mt-1 text-sm sm:text-base leading-snug">
+                    <a [routerLink]="['/news', item?.slug]">{{ item?.title }}</a>
                   </h4>
                   <p class="text-xs text-gray-500 mt-1">6 hours ago</p>
                 </div>
@@ -231,9 +281,9 @@
           </div>
         </section>
 
-        <!-- Photo Gallery -->
         <app-photo-gallery></app-photo-gallery>
       </div>
+
 
       <!-- Sidebar -->
       <aside class="col-span-12 lg:col-span-3">

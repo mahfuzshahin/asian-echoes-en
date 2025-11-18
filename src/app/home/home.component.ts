@@ -20,7 +20,7 @@ export class HomeComponent implements OnInit{
   sportsNews: News[] = [];
   latest_news:any;
   category_news:any[]=[];
-  categories: any[] = [{name:'South Asia', code:'sports'},
+  categories: any[] = [{name:'South Asia', code:'south-asia'},
     {name:'Southeast Asia' ,code: 'southeast-asia'},
     {name:'Opinion' ,code: 'opinion'},
     {name:'Editorial' ,code: 'editorial'},
@@ -98,8 +98,8 @@ export class HomeComponent implements OnInit{
               mainNews: res.data.mainNews || null,
               otherNews: res.data.otherNews || []
             });
-          } else {
-            // If no news, push empty arrays
+          }
+          else {
             this.categorySections.push({
               name: category.name,
               code: category.code,

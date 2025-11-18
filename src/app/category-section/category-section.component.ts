@@ -23,7 +23,7 @@ export class CategorySectionComponent implements OnInit{
   isLoadingMore = false;
   currentPage = 1;
   totalPages = 1;
-  limit = 2;
+  limit = 4;
   hasMoreNews = true;
   totalArticles = 0;
 
