@@ -48,32 +48,10 @@
               {{ news?.title }}
             </h1>
 
-            <!-- Summary - REMOVED [innerHTML] binding here -->
-            <p class="text-xl text-gray-600 leading-relaxed mb-6">
-              {{ news?.summary }}
-            </p>
+<!--            <p class="text-xl text-gray-600 leading-relaxed mb-6">-->
+<!--              {{ news?.summary }}-->
+<!--            </p>-->
 
-            <!-- Author and Meta -->
-<!--            <div class="flex flex-wrap items-center justify-between">-->
-<!--              <div class="flex items-center space-x-4">-->
-<!--                <div class="flex items-center space-x-3">-->
-<!--                  <div class="w-10 h-10 bg-red-100 rounded-full flex items-center justify-center">-->
-<!--                    <span class="text-red-600 font-semibold text-sm">-->
-<!--                      {{ news?.author?.name?.charAt(0) || 'A' }}-->
-<!--                    </span>-->
-<!--                  </div>-->
-<!--                  <div>-->
-<!--                    <p class="font-semibold text-gray-800">{{ news?.author?.name || 'News Desk' }}</p>-->
-<!--                    <p class="text-sm text-gray-500">{{ news?.author?.designation || 'Senior Correspondent' }}</p>-->
-<!--                  </div>-->
-<!--                </div>-->
-<!--              </div>-->
-<!--              <div class="flex items-center space-x-4 text-sm text-gray-500">-->
-<!--                <span>{{ (news?.content ? calculateReadingTime(news.content) : 1) }} min read</span>-->
-<!--                <span>•</span>-->
-<!--                <span>Updated {{ formatDate(news?.publishAt) }}</span>-->
-<!--              </div>-->
-<!--            </div>-->
 
             <div class="flex flex-wrap items-center justify-between">
               <div class="flex items-center space-x-4">

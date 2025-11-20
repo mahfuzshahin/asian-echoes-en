@@ -23,10 +23,26 @@ export class NewsDetailComponent implements OnInit{
   ngOnInit() {
     this.viewNews();
   }
+  private setCanonicalUrl(slug: string) {
+    const canonicalUrl = `https://api.asianechoes.com/api/news-meta/${slug}`;
+
+    // Remove existing canonical
+    const existing = document.querySelector('link[rel="canonical"]');
+    if (existing) {
+      existing.remove();
+    }
+
+    // Add canonical pointing to meta URL
+    const link = document.createElement('link');
+    link.rel = 'canonical';
+    link.href = canonicalUrl;
+    document.head.appendChild(link);
+  }
   viewNews() {
     this.route.params.subscribe((params) => {
       const slug = params['slug']; // keep as string
       if (slug) {
+        this.setCanonicalUrl(slug);
         this.service.getNewsBySlug(slug).subscribe((response: any) => {
           console.log(response);
           this.news = response.data;
